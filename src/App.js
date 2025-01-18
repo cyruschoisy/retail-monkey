@@ -84,9 +84,9 @@ const App = () => {
       if (response === 'Too high') {
         setMonkeyfeels((prev) => prev - 2);
       } else if (response === 'Fair') {
-        setMonkeyfeels((prev) => prev);
-      } else {
         setMonkeyfeels((prev) => prev + 2);
+      } else {
+        setMonkeyfeels((prev) => prev - 2);
       }
     }
 
@@ -99,15 +99,20 @@ const App = () => {
   };
 
   const getMonkeyMood = () => {
-    if (monkeyfeels < 0) {
+    if (monkeyfeels < 0 && monkeyfeels >= -4) {
       return 'Sad';
+    } else if (monkeyfeels < -4) {
+      return 'Angry';
+    } else if (monkeyfeels > 0 && monkeyfeels < 3) {
+      return 'Confused';
     } else if (monkeyfeels === 0) {
       return 'Neutral';
-    } else {
+    } else if (monkeyfeels >= 3) {
       return 'Happy';
     }
   };
-
+  
+  
   // Get the correct image source based on monkeyfeels
   const getMonkeyImage = () => {
     const mood = getMonkeyMood();
@@ -115,7 +120,12 @@ const App = () => {
       return './sad.png'; // Path to sad image
     } else if (mood === 'Neutral') {
       return './normal.png'; // Path to neutral image
-    } else {
+    } 
+    else if(mood==='Angry'){
+      return './anger.png';
+    }else if(mood==='Confused'){
+      return'./confuse.png';
+    }else {
       return './happp.png'; // Path to happy image
     }
   };
