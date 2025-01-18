@@ -49,12 +49,21 @@ const App = () => {
     setAskedMonkey(true);
     setShowMonkey(response);
   };
-
+  const starToFeels = {
+    1: -2, // 1 star maps to -2
+    2: -1, // 2 stars map to -1
+    3: 0,  // 3 stars map to 0
+    4: 1,  // 4 stars map to 1
+    5: 2,  // 5 stars map to 2
+  };
+  
   const handleSurveyResponse = (response) => {
     if (currentQuestion === 0) {
-      // Rating experience out of 5 stars
-      setMonkeyfeels((prev) => prev + parseInt(response));
-    } else if (currentQuestion === 1) {
+      // Assuming `response` is the star rating as a number (1-5)
+      const feelsValue = starToFeels[parseInt(response)]; // Map star rating to `monkeyfeels` value
+      setMonkeyfeels((prev) => prev + feelsValue); // Update the state
+    }
+     else if (currentQuestion === 1) {
       // How are you finding everything today
       if (response === 'Incredible') {
         setMonkeyfeels((prev) => prev + 2);
