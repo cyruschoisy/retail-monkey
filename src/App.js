@@ -7,6 +7,7 @@ const App = () => {
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [surveyQuestions, setSurveyQuestions] = useState([]); // Store fetched questions
   const [isLoading, setIsLoading] = useState(true); 
+  const [monkeyfeels, setMonkeyfeels] = useState(0); //this is for the #monkeyfeels
 
   const access_token = '7FdwLAtKDIZ0i-94TbpI08mfXADueLaGAzCgTD2dI.lpUtxdFXZZEZ9DZ4Gn9cieR.8kbpEbDHGt4MCEaD6lQpzEIzfa8jL8OZp2Ir-oN645cHrAVuOE2BNt0aZto3wf';
   const survey_id = '416828154'; // survey ID
@@ -49,7 +50,38 @@ const App = () => {
     setShowMonkey(response);
   };
 
-  const handleSurveyResponse = () => {
+  const handleSurveyResponse = (response) => {
+    if (currentQuestion === 0) {
+      // Rating experience out of 5 stars
+      setMonkeyfeels((prev) => prev + parseInt(response));
+    } else if (currentQuestion === 1) {
+      // How are you finding everything today
+      if (response === 'Incredible') {
+        setMonkeyfeels((prev) => prev + 2);
+      } else if (response === 'Horrible') {
+        setMonkeyfeels((prev) => prev - 2);
+      } else {
+        setMonkeyfeels((prev) => prev);
+      }
+    } else if (currentQuestion === 2) {
+      // Is this what you are looking for
+      if (response === 'Yes') {
+        setMonkeyfeels((prev) => prev + 2);
+      } else {
+        setMonkeyfeels((prev) => prev - 2);
+      }
+    } else if (currentQuestion === 3) {
+      // Do you like the price
+      if (response === 'Too high') {
+        setMonkeyfeels((prev) => prev - 2);
+      } else if (response === 'Fair') {
+        setMonkeyfeels((prev) => prev);
+      } else {
+        setMonkeyfeels((prev) => prev + 2);
+      }
+    }
+
+    // Move to the next question
     if (currentQuestion < surveyQuestions.length - 1) {
       setCurrentQuestion((prev) => prev + 1);
     } else {
@@ -57,8 +89,35 @@ const App = () => {
     }
   };
 
+  const getMonkeyMood = () => {
+    if (monkeyfeels < 0) {
+      return 'Sad';
+    } else if (monkeyfeels === 0) {
+      return 'Neutral';
+    } else {
+      return 'Happy';
+    }
+  };
+
+  // Get the correct image source based on monkeyfeels
+  const getMonkeyImage = () => {
+    const mood = getMonkeyMood();
+    if (mood === 'Sad') {
+      return './sad.png'; // Path to sad image
+    } else if (mood === 'Neutral') {
+      return './normal.png'; // Path to neutral image
+    } else {
+      return './happp.png'; // Path to happy image
+    }
+  };
+
   return (
     <div className="row">
+      {/* Monkey Feels Score */}
+      <div className="column monkey-feels-container">
+        <p>Monkeyfeels: {monkeyfeels} - {getMonkeyMood()} </p>
+      </div>
+
       {/* Monkey Question Container */}
       {!askedMonkey && (
         <div className="column question-container">
@@ -72,14 +131,14 @@ const App = () => {
       {showMonkey && (
         <div className="column monkey-container">
           <img
-            src="./monkey.jpg" // Replace with actual monkey image URL
+            src={getMonkeyImage()} // Dynamically change image based on mood
             alt="Monkey"
             className="monkey-image"
           />
         </div>
       )}
 
-      {/* Text Container */}
+      {/* Survey and Monkey Feels */}
       {askedMonkey && (
         <div className="column text-container">
           <p>Survey</p>
@@ -89,7 +148,7 @@ const App = () => {
             <>
               <p>{surveyQuestions[currentQuestion]?.question}</p>
               {surveyQuestions[currentQuestion]?.options.map((option, index) => (
-                <button key={index} onClick={handleSurveyResponse}>
+                <button key={index} onClick={() => handleSurveyResponse(option)}>
                   {option}
                 </button>
               ))}
