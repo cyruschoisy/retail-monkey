@@ -4,18 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Survey Questions</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            padding: 20px;
-        }
-        .question {
-            margin-bottom: 20px;
-        }
-        .question h2 {
-            font-size: 18px;
-        }
-    </style>
 </head>
 <body>
 
@@ -23,7 +11,7 @@
     <div id="root"></div>
 
     <script>
-        const surveyMonkeyAccessToken = 'cOmUpOXfevWx560egh1njjXZ9DfW21pyZrWDMpb7mvCgL4'; // Replace with your access token
+        const accessToken = 'cOmUpOXfevWx560egh1njjXZ9DfW21pyZrWDMpb7mvCgL4.AQ71yQM85I4Sr7P-D.FdVeWiN8IPF6rdhjBMLcQhLWTx0YQwmg8Ac.NWmMbg72MuqzML5oifAVl0IVeUR'; // Replace with the OAuth token you obtained
         const surveyId = '416827586'; // Replace with your survey ID
 
         // Function to fetch and display survey questions
@@ -32,7 +20,7 @@
                 const response = await fetch(`https://api.surveymonkey.com/v3/surveys/${surveyId}/questions`, {
                     method: 'GET',
                     headers: {
-                        'Authorization': `Bearer ${surveyMonkeyAccessToken}`,
+                        'Authorization': `Bearer ${accessToken}`,
                         'Content-Type': 'application/json'
                     }
                 });
@@ -44,20 +32,16 @@
                 const data = await response.json();
                 const questions = data.data;
 
-                // Get the div where we will display the questions
-                const questionsContainer = document.getElementById('survey-questions');
+                const questionsContainer = document.getElementById('root');
 
-                // Loop through questions and create HTML elements for each
                 questions.forEach((question) => {
                     const questionDiv = document.createElement('div');
                     questionDiv.classList.add('question');
                     
-                    // Create a heading for the question text
                     const questionHeading = document.createElement('h2');
                     questionHeading.textContent = question.headings[0].heading;
                     questionDiv.appendChild(questionHeading);
 
-                    // If there are answer choices (for multiple choice), display them
                     if (question.answers && question.answers.choices) {
                         const choicesList = document.createElement('ul');
                         question.answers.choices.forEach(choice => {
@@ -68,7 +52,6 @@
                         questionDiv.appendChild(choicesList);
                     }
 
-                    // Append the question div to the container
                     questionsContainer.appendChild(questionDiv);
                 });
             } catch (error) {
