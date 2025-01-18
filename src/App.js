@@ -6,8 +6,10 @@ const App = () => {
   const [askedMonkey, setAskedMonkey] = useState(false);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [surveyQuestions, setSurveyQuestions] = useState([]); // Store fetched questions
-  const [isLoading, setIsLoading] = useState(true); 
+  const [isLoading, setIsLoading] = useState(true);
   const [monkeyfeels, setMonkeyfeels] = useState(0); //this is for the #monkeyfeels
+
+  const [cartItems, setCartItems] = useState([]); // Placeholder for cart items
 
   const access_token = '7FdwLAtKDIZ0i-94TbpI08mfXADueLaGAzCgTD2dI.lpUtxdFXZZEZ9DZ4Gn9cieR.8kbpEbDHGt4MCEaD6lQpzEIzfa8jL8OZp2Ir-oN645cHrAVuOE2BNt0aZto3wf';
   const survey_id = '416828154'; // survey ID
@@ -49,6 +51,7 @@ const App = () => {
     setAskedMonkey(true);
     setShowMonkey(response);
   };
+
   const starToFeels = {
     1: -2, // 1 star maps to -2
     2: -1, // 2 stars map to -1
@@ -56,14 +59,13 @@ const App = () => {
     4: 1,  // 4 stars map to 1
     5: 2,  // 5 stars map to 2
   };
-  
+
   const handleSurveyResponse = (response) => {
     if (currentQuestion === 0) {
-      // Assuming `response` is the star rating as a number (1-5)
-      const feelsValue = starToFeels[parseInt(response)]; // Map star rating to `monkeyfeels` value
+      // Assuming response is the star rating as a number (1-5)
+      const feelsValue = starToFeels[parseInt(response)]; // Map star rating to monkeyfeels value
       setMonkeyfeels((prev) => prev + feelsValue); // Update the state
-    }
-     else if (currentQuestion === 1) {
+    } else if (currentQuestion === 1) {
       // How are you finding everything today
       if (response === 'Incredible') {
         setMonkeyfeels((prev) => prev + 2);
@@ -111,36 +113,38 @@ const App = () => {
       return 'Happy';
     }
   };
-  
-  
-  // Get the correct image source based on monkeyfeels
+
   const getMonkeyImage = () => {
     const mood = getMonkeyMood();
     if (mood === 'Sad') {
-      return './sad.png'; // Path to sad image
+      return './sad.png'; 
     } else if (mood === 'Neutral') {
-      return './normal.png'; // Path to neutral image
-    } 
-    else if(mood==='Angry'){
+      return './normal.png'; 
+    } else if (mood === 'Angry') {
       return './anger.png';
-    }else if(mood==='Confused'){
-      return'./confuse.png';
-    }else {
-      return './happp.png'; // Path to happy image
+    } else if (mood === 'Confused') {
+      return './confuse.png';
+    } else {
+      return './happp.png'; 
     }
+  };
+
+  const handleClearCart = () => {
+    alert('Clearing cart!');
+ 
+  };
+
+  const handlePurchaseCart = () => {
+    alert('Proceeding with purchase!');
+ 
   };
 
   return (
     <div className="row">
-      {/* Monkey Feels Score */}
-      <div className="column monkey-feels-container">
-        <p>Monkeyfeels: {monkeyfeels} - {getMonkeyMood()} </p>
-      </div>
-
       {/* Monkey Question Container */}
       {!askedMonkey && (
         <div className="column question-container">
-          <p>Would you like your shopping experience to be accompanied by a friendly feedback monkey?</p>
+          <h3>Would you like your shopping experience to be accompanied by a friendly feedback monkey?</h3>
           <button onClick={() => handleMonkeyResponse(true)}>Yes</button>
           <button onClick={() => handleMonkeyResponse(false)}>No</button>
         </div>
@@ -160,12 +164,12 @@ const App = () => {
       {/* Survey and Monkey Feels */}
       {askedMonkey && (
         <div className="column text-container">
-          <p>Survey</p>
+          <h2>RETAIL SURVEY</h2>
           {isLoading ? (
             <p>Loading survey questions...</p>
           ) : currentQuestion !== null ? (
             <>
-              <p>{surveyQuestions[currentQuestion]?.question}</p>
+              <h3>{surveyQuestions[currentQuestion]?.question}</h3>
               {surveyQuestions[currentQuestion]?.options.map((option, index) => (
                 <button key={index} onClick={() => handleSurveyResponse(option)}>
                   {option}
@@ -177,6 +181,12 @@ const App = () => {
           )}
         </div>
       )}
+
+      {/* Cart Actions */}
+      <div className="column cart-container">
+        <button onClick={handleClearCart}>Clear Cart</button>
+        <button onClick={handlePurchaseCart}>Purchase Cart</button>
+      </div>
     </div>
   );
 };
